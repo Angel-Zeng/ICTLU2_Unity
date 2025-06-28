@@ -10,7 +10,7 @@ public class AuthPanel : MonoBehaviour
 
     public void OnLoginClick() =>
         StartCoroutine(ApiManager.Login(user.text, pass.text,
-            () => feedback.text = "Logged in!",
+            () => feedback.text = "Logging in!",
             err => feedback.text = $"Login failed: {err}"));
 
     public void OnRegisterClick() =>

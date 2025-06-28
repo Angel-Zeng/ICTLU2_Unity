@@ -5,67 +5,199 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public static class ApiManager
+public static class APIManager
 {
-    private const string Base = "https://avansict2237024.azurewebsites.net/api/";
-    private static string _jwt;
 
-    private struct TokenDto { public string token; }
+    private const string BASE_URL = "https://avansict2237024.azurewebsites.net/api";
 
+    private static string jwtToken = "";
 
-// For registering a new user :)
-    public static IEnumerator Register(string username, string password, Action onOk, Action<string> onError)
+// For registering a new user! 
+    public static IEnumerator Register(string username,string password, Action<APIResponse> resultCallback)
     {
-        var body = $"{{\"username\":\"{username}\",\"password\":\"{password}\"}}";
+        string jsonBody = $"{{\"username\":\"{username}\",\"password\":\"{password}\"}}";
 
-        using var request = new UnityWebRequest(Base + "Auth/register", "POST");
-        var bytes = Encoding.UTF8.GetBytes(body);
-        request.uploadHandler = new UploadHandlerRaw(bytes);
+        // POST reuquest
+        using UnityWebRequest request = new UnityWebRequest(BASE_URL + "/Auth/register", "POST");
+
+        byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonBody);
+        request.uploadHandler = new UploadHandlerRaw(bodyBytes);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
+        // Send request
         yield return request.SendWebRequest();
 
-        if (request.result == UnityWebRequest.Result.Success)
-            onOk?.Invoke();
-        else
-            onError?.Invoke(request.error);
+        APIResponse response = new APIResponse(
+            request.result == UnityWebRequest.Result.Success,
+            request.error,
+            request.downloadHandler.text,
+            (int)request.responseCode);
+
+        resultCallback?.Invoke(response);
     }
 
-// For logging in an existing user with JWT and cache :)
-    public static IEnumerator Login(string username, string password, Action onOk, Action<string> onError)
-    {
-        var body = $"{{\"username\":\"{username}\",\"password\":\"{password}\"}}";
 
-        using var request = new UnityWebRequest(Base + "Auth/login", "POST");
-        var bytes = Encoding.UTF8.GetBytes(body);
-        request.uploadHandler = new UploadHandlerRaw(bytes);
+    public static IEnumerator Login(string username, string password, Action<APIResponse> resultCallback)
+    {
+        string jsonBody =
+            $"{{\"username\":\"{username}\",\"password\":\"{password}\"}}";
+
+        using UnityWebRequest request =
+            new UnityWebRequest(BASE_URL + "/Auth/login", "POST");
+
+        request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonBody));
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
         yield return request.SendWebRequest();
-        if (request.result == UnityWebRequest.Result.Success)
+
+        bool success = request.result == UnityWebRequest.Result.Success;
+        string body = request.downloadHandler.text;
+
+        // If Login was successful, gets a JWT token in the response
+        if (success)
         {
-            var dto = JsonUtility.FromJson<TokenDto>(request.downloadHandler.text);
-            _jwt = dto.token;   
-            PlayerPrefs.SetString("Jwt", _jwt);  
+            AuthResponse auth = JsonUtility.FromJson<AuthResponse>(body);
+            jwtToken = auth.token;
+            PlayerPrefs.SetString("authToken", jwtToken);
             PlayerPrefs.Save();
-            onOk?.Invoke();
         }
-        else
-            onError?.Invoke(request.error);
+
+        APIResponse response = new APIResponse(
+            success,
+            request.error,
+            body,
+            (int)request.responseCode);
+
+        resultCallback?.Invoke(response);
     }
 
-//Wrapper 
-    private static UnityWebRequest AuthRequest(string path, string method = "GET")
+
+    public static IEnumerator GetWorlds(Action<APIResponse> resultCallback)
     {
-        var r = new UnityWebRequest(Base + path, method);
-        r.SetRequestHeader("Authorization", $"Bearer {_jwt}");
-        r.downloadHandler = new DownloadHandlerBuffer();
-        return r;
+        using UnityWebRequest request =
+            new UnityWebRequest(BASE_URL + "/worlds", "GET");
+
+        request.downloadHandler = new DownloadHandlerBuffer();
+        AddAuthHeader(request);
+
+        yield return request.SendWebRequest();
+
+        APIResponse response = new APIResponse(
+            request.result == UnityWebRequest.Result.Success,
+            request.error,
+            request.downloadHandler.text,
+            (int)request.responseCode);
+
+        resultCallback?.Invoke(response);
     }
 
-    // convenience for app start-up
-    public static void LoadTokenFromPrefs() =>
-        _jwt = PlayerPrefs.GetString("Jwt", "");
+
+    public static IEnumerator CreateWorld(string worldName,
+                                          int width,
+                                          int height,
+                                          Action<APIResponse> resultCallback)
+    {
+        string jsonBody =
+            $"{{\"name\":\"{worldName}\",\"width\":{width},\"height\":{height}}}";
+
+        using UnityWebRequest request =
+            new UnityWebRequest(BASE_URL + "/worlds", "POST");
+
+        request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonBody));
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+        AddAuthHeader(request);
+
+        yield return request.SendWebRequest();
+
+        APIResponse response = new APIResponse(
+            request.result == UnityWebRequest.Result.Success,
+            request.error,
+            request.downloadHandler.text,
+            (int)request.responseCode);
+
+        resultCallback?.Invoke(response);
+    }
+
+
+    public static IEnumerator DeleteWorld(int worldId,
+                                          Action<APIResponse> resultCallback)
+    {
+        using UnityWebRequest request =
+            new UnityWebRequest($"{BASE_URL}/worlds/{worldId}", "DELETE");
+
+        request.downloadHandler = new DownloadHandlerBuffer();
+        AddAuthHeader(request);
+
+        yield return request.SendWebRequest();
+
+        APIResponse response = new APIResponse(
+            request.result == UnityWebRequest.Result.Success,
+            request.error,
+            request.downloadHandler.text,
+            (int)request.responseCode);
+
+        resultCallback?.Invoke(response);
+    }
+
+    public static IEnumerator AddObject(int worldId,
+                                        string type,
+                                        float x,
+                                        float y,
+                                        Action<APIResponse> resultCallback)
+    {
+        string jsonBody =
+            $"{{\"type\":\"{type}\",\"x\":{x},\"y\":{y}}}";
+
+        using UnityWebRequest request =
+            new UnityWebRequest($"{BASE_URL}/worlds/{worldId}/objects", "POST");
+
+        request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonBody));
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+        AddAuthHeader(request);
+
+        yield return request.SendWebRequest();
+
+        APIResponse response = new APIResponse(
+            request.result == UnityWebRequest.Result.Success,
+            request.error,
+            request.downloadHandler.text,
+            (int)request.responseCode);
+
+        resultCallback?.Invoke(response);
+    }
+
+    private static void AddAuthHeader(UnityWebRequest request)
+    {
+        if (!string.IsNullOrEmpty(jwtToken))
+            request.SetRequestHeader("Authorization", $"Bearer {jwtToken}");
+    }
+}
+
+//Stolen from friend
+[System.Serializable]
+public class APIResponse
+{
+    public bool Success;
+    public string Message;
+    public string Data;
+    public int StatusCode;
+
+    public APIResponse(bool success, string message,
+                       string data = null, int statusCode = 0)
+    {
+        Success = success;
+        Message = message;
+        Data = data;
+        StatusCode = statusCode;
+    }
+}
+
+[System.Serializable]
+public class AuthResponse
+{
+    public string token;
 }
