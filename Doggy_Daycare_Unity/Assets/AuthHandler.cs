@@ -1,20 +1,50 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class AuthPanel : MonoBehaviour
+public class AuthHandler : MonoBehaviour
 {
-    [SerializeField] TMP_InputField user, pass;
-    [SerializeField] TextMeshProUGUI feedback;
+    public TMP_InputField usernameField;
+    public TMP_InputField passwordField;
+    public Button loginButton;
+    public Button registerButton;
+    public TextMeshProUGUI feedbackText;
 
-    void Start() { ApiManager.LoadTokenFromPrefs(); /* auto-login if you want */ }
+    private void Start()
+    {
+        loginButton.onClick.AddListener(OnLoginClicked);
+        registerButton.onClick.AddListener(OnRegisterClicked);
+    }
 
-    public void OnLoginClick() =>
-        StartCoroutine(ApiManager.Login(user.text, pass.text,
-            () => feedback.text = "Logging in!",
-            err => feedback.text = $"Login failed: {err}"));
+    private void OnLoginClicked()
+    {
+        feedbackText.text = "Logging in...";
+        StartCoroutine(APIManager.Login(
+            usernameField.text,
+            passwordField.text,
+            OnAuthResult));
+    }
 
-    public void OnRegisterClick() =>
-        StartCoroutine(ApiManager.Register(user.text, pass.text,
-            () => feedback.text = "Account created!",
-            err => feedback.text = $"Register failed: {err}"));
+    private void OnRegisterClicked()
+    {
+        feedbackText.text = "Creating account...";
+        StartCoroutine(APIManager.Register(
+            usernameField.text,
+            passwordField.text,
+            OnAuthResult));
+    }
+
+    private void OnAuthResult(APIResponse result)
+    {
+        if (result.Success)
+        {
+            feedbackText.text = "Success!";
+            SceneManager.LoadScene("WorldsScene");
+        }
+        else
+        {
+            feedbackText.text = "Error: " + result.Message;
+        }
+    }
 }

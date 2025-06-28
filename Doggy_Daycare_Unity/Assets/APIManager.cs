@@ -12,8 +12,28 @@ public static class APIManager
 
     private static string jwtToken = "";
 
-// For registering a new user! 
-    public static IEnumerator Register(string username,string password, Action<APIResponse> resultCallback)
+    public static void LoadSavedToken()
+    {
+        jwtToken = PlayerPrefs.GetString("authToken", "");
+    }
+
+    public struct WorldDto
+    {
+        public int id;
+        public string name;
+        public int width;
+        public int height;
+    }
+    public static void Logout()
+    {
+        jwtToken = "";                    // forget in memory
+        PlayerPrefs.DeleteKey("authToken"); // forget on disk
+        PlayerPrefs.Save();
+    }
+
+
+    // For registering a new user! 
+    public static IEnumerator Register(string username, string password, Action<APIResponse> resultCallback)
     {
         string jsonBody = $"{{\"username\":\"{username}\",\"password\":\"{password}\"}}";
 
@@ -55,7 +75,7 @@ public static class APIManager
         bool success = request.result == UnityWebRequest.Result.Success;
         string body = request.downloadHandler.text;
 
-        // If Login was successful, gets a JWT token in the response
+        // If Login was successful, gets a JWT token in the response yippiee
         if (success)
         {
             AuthResponse auth = JsonUtility.FromJson<AuthResponse>(body);
