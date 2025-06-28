@@ -89,10 +89,11 @@ public class WorldHandler : MonoBehaviour
     //Here this method is called when user clicks to create a world.
     private void CreateWorld()
     {
+        //checking for correct input values from user
         if (!int.TryParse(widthField.text, out int width) ||
             !int.TryParse(heightField.text, out int height))
         {
-            feedbackText.text = "Width/Height must be numbers";
+            feedbackText.text = "Width must be between 20 and 200 & height must be between 10 and 100";
             return;
         }
 
@@ -100,7 +101,7 @@ public class WorldHandler : MonoBehaviour
             nameField.text, width, height,
             result =>
             {
-                feedbackText.text = result.Success ? "Created!" : "Error: " + result.Message;
+                feedbackText.text = result.Success ? "World created!" : "Error: " + result.Message;
                 if (result.Success) StartCoroutine(LoadWorlds());
             }));
     }
