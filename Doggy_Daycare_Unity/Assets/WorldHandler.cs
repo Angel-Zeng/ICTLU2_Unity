@@ -62,11 +62,11 @@ public class WorldHandler : MonoBehaviour
                 card.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = world.name;
 
                 // OPEN
-                card.transform.Find("OpenBtn").GetComponent<Button>().onClick
+                card.transform.Find("OpenButton").GetComponent<Button>().onClick
                     .AddListener(() => OpenWorld(world));
 
                 // DELETE
-                card.transform.Find("DelBtn").GetComponent<Button>().onClick
+                card.transform.Find("DeleteButton").GetComponent<Button>().onClick
                     .AddListener(() => StartCoroutine(APIManager.DeleteWorld(
                         world.id,
                         delResult =>
