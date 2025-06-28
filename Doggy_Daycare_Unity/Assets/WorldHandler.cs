@@ -69,10 +69,10 @@ public class WorldHandler : MonoBehaviour
                 card.transform.Find("DeleteButton").GetComponent<Button>().onClick
                     .AddListener(() => StartCoroutine(APIManager.DeleteWorld(
                         world.id,
-                        delResult =>
+                        deleteResult =>
                         {
-                            if (delResult.Success) Destroy(card);
-                            else feedbackText.text = "Delete error: " + delResult.Message;
+                            if (deleteResult.Success) Destroy(card);
+                            else feedbackText.text = "Delete error: " + deleteResult.Message;
                         })));
             }
         });
