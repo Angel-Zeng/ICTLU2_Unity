@@ -1692,7 +1692,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b1cd0cc6bbf36b4d8b33958872c8526, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  userName: {fileID: 132167342}
+  usernameField: {fileID: 132167342}
+  passwordField: {fileID: 1047484339}
+  loginButton: {fileID: 1804649123}
+  registerButton: {fileID: 0}
+  feedbackText: {fileID: 0}
 --- !u!4 &1690850537
 Transform:
   m_ObjectHideFlags: 0
@@ -1720,6 +1724,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a45ed2e803b4e142978446cb16b087d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dogPrefab: {fileID: 0}
+  toyPrefab: {fileID: 0}
+  feedbackText: {fileID: 0}
 --- !u!114 &1690850539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1732,6 +1739,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38787e4956074c74392701e88a58bf9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  listParent: {fileID: 0}
+  worldCardPrefab: {fileID: 0}
+  nameField: {fileID: 0}
+  widthField: {fileID: 0}
+  heightField: {fileID: 0}
+  createButton: {fileID: 0}
+  refreshButton: {fileID: 0}
+  logoutButton: {fileID: 0}
+  feedbackText: {fileID: 0}
 --- !u!1 &1804649121
 GameObject:
   m_ObjectHideFlags: 0
