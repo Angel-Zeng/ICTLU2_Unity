@@ -8,37 +8,78 @@ public class ObjectHandler : MonoBehaviour
 
     public TextMeshProUGUI feedbackText;
 
-    private GameObject currentPrefab;
+    private GameObject prefabToPlace;  
+    private GameObject ghost;   
 
-    public void PickDog() => currentPrefab = dogPrefab;
-    public void PickToy() => currentPrefab = toyPrefab;
+    public void BeginDragDog() => BeginDrag(dogPrefab);
+    public void BeginDragToy() => BeginDrag(toyPrefab);
+
+    private void BeginDrag(GameObject prefab)
+    {
+        CancelDrag();
+
+        prefabToPlace = prefab;
+
+
+        ghost = Instantiate(prefabToPlace);
+        ghost.name = "Ghost";
+        SetGhostAlpha(0.5f); 
+    }
 
     private void Update()
     {
-        //it checks if a prefab is selected and if the mouse button is clicked
-        if (currentPrefab == null) return;
-        if (!Input.GetMouseButtonDown(0)) return;
 
-        //Get the world position of the mouse click and ignores z axis cuz it aint 3d
-        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        worldPosition.z = 0;
+        if (ghost == null) return;
 
-        // stay inside world size
-        if (worldPosition.x < 0 || worldPosition.y < 0 ||
-            worldPosition.x > GameState.SelectedWorldWidth ||
-            worldPosition.y > GameState.SelectedWorldHeight)
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0;     
+        ghost.transform.position = mousePos;
+
+        if (Input.GetMouseButtonUp(0))
         {
-            feedbackText.text = "Stay within bounds!";
-            return;
+            bool inside =
+                mousePos.x >= 0 && mousePos.y >= 0 &&
+                mousePos.x <= GameState.SelectedWorldWidth &&
+                mousePos.y <= GameState.SelectedWorldHeight;
+
+            if (inside)
+            {
+                Instantiate(prefabToPlace, mousePos, Quaternion.identity);
+
+                StartCoroutine(APIManager.AddObject(
+                    GameState.SelectedWorldId,
+                    prefabToPlace.name,    
+                    mousePos.x, mousePos.y,
+                    res => feedbackText.text =
+                        res.Success ? "Placed!" : "Error: " + res.Message));
+            }
+            else
+            {
+                feedbackText.text = "Stay within bounds!";
+            }
+
+            CancelDrag(); 
         }
 
-        //spawns the dog or toy at the location
-        Instantiate(currentPrefab, worldPosition, Quaternion.identity);
+        if (Input.GetMouseButtonDown(1))
+            CancelDrag();
+    }
 
-        // Sends a request to the API to add the object
-        string typeName = currentPrefab.name;
-        StartCoroutine(APIManager.AddObject(
-            GameState.SelectedWorldId, typeName, worldPosition.x, worldPosition.y,
-            result => feedbackText.text = result.Success ? "Placed" : "Error: " + result.Message));
+    private void CancelDrag()
+    {
+        if (ghost != null) Destroy(ghost);
+        ghost = null;
+        prefabToPlace = null;
+    }
+
+    private void SetGhostAlpha(float alpha)
+    {
+        SpriteRenderer sr = ghost.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            Color c = sr.color;
+            c.a = alpha;
+            sr.color = c;
+        }
     }
 }
