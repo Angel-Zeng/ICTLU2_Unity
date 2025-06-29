@@ -118,10 +118,12 @@ public class WorldHandler : MonoBehaviour
 
     private void OpenWorld(APIManager.WorldDto selectedWorld)
     {
+        Debug.Log($"[OpenWorld] id={selectedWorld.id}");
         GameState.SelectedWorldId = selectedWorld.id;
         GameState.SelectedWorldWidth = selectedWorld.width;
         GameState.SelectedWorldHeight = selectedWorld.height;
-        SceneManager.LoadScene("Daycare");
+
+        SceneManager.LoadScene("Daycare");   // load the editor scene
     }
 
     /* ────────── Create a new world ────────── */

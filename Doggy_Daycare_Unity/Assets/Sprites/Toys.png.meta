@@ -134,10 +134,10 @@ TextureImporter:
       name: Ball
       rect:
         serializedVersion: 2
-        x: 0
-        y: 517
-        width: 502
-        height: 507
+        x: 64
+        y: 539
+        width: 452
+        height: 466
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,10 +178,10 @@ TextureImporter:
       name: Bone
       rect:
         serializedVersion: 2
-        x: 483
-        y: 550
-        width: 541
-        height: 469
+        x: 464
+        y: 537
+        width: 505
+        height: 487
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -244,10 +244,10 @@ TextureImporter:
       name: Frisbee
       rect:
         serializedVersion: 2
-        x: 527
-        y: 32
+        x: 489
+        y: 53
         width: 490
-        height: 467
+        height: 499
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

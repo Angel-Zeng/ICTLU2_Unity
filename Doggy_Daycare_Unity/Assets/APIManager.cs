@@ -130,7 +130,7 @@ public static class APIManager
                                           Action<APIResponse> callback)
     {
         using UnityWebRequest request =
-            new UnityWebRequest($"{BASE_URL}/Worlds/{id}", "DELETE"); // URL untouched
+            new UnityWebRequest($"{BASE_URL}/Worlds/{worldId}", "DELETE"); // URL untouched
 
         request.downloadHandler = new DownloadHandlerBuffer();
         AddAuthHeader(request);
@@ -172,7 +172,7 @@ public static class APIManager
 
         if (req.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError($"GET /worlds/{worldId} failed: {req.downloadHandler.text}");
+            Debug.LogError($"GET /Worlds/{id} failed: {req.downloadHandler.text}");
             yield break;
         }
         var dto = JsonUtility.FromJson<ObjectHandler.WorldWithObjects>(

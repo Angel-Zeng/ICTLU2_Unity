@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 4b0177ea2a3a06f49a4a7579937e972a
+guid: e107ee297c6df10438f2068c426a9f0f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8851914405083225943
-    second: Doggie Sprites 1_0
-  - first:
-      213: 1469726581954787499
-    second: Doggie Sprites 1_1
-  - first:
-      213: 2965679980283277454
-    second: Doggie Sprites 1_2
-  - first:
-      213: -5333386361492254746
-    second: Doggie Sprites 1_3
+      213: -7711746880082783758
+    second: trash-can_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -122,89 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Dachshund
+      name: trash-can_0
       rect:
         serializedVersion: 2
-        x: 58
-        y: 529
-        width: 444
-        height: 463
-      alignment: 9
-      pivot: {x: 0.49574327, y: 0.50408196}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 75f1621804158da70800000000000000
-      internalID: 8851914405083225943
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Frenchie
-      rect:
-        serializedVersion: 2
-        x: 35
-        y: 58
-        width: 467
-        height: 458
+        x: 47
+        y: 0
+        width: 418
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ba83d521a84856410800000000000000
-      internalID: 1469726581954787499
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Shiba
-      rect:
-        serializedVersion: 2
-        x: 515
-        y: 514
-        width: 507
-        height: 489
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e80b54eaa36382920800000000000000
-      internalID: 2965679980283277454
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Poodle
-      rect:
-        serializedVersion: 2
-        x: 511
-        y: 57
-        width: 475
-        height: 463
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6ef47599c510cf5b0800000000000000
-      internalID: -5333386361492254746
+      spriteID: 2f150f6321f5af490800000000000000
+      internalID: -7711746880082783758
       vertices: []
       indices: 
       edges: []
@@ -213,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ccabbac36cfca3f4faf4f66c2eeba65d
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -222,11 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Dachshund: 8851914405083225943
-      Frenchie: 1469726581954787499
-      Poodle: -5333386361492254746
-      Shiba: 2965679980283277454
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
