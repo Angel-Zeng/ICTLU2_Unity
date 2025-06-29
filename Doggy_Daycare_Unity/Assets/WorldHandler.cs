@@ -8,8 +8,8 @@ public class WorldHandler : MonoBehaviour
 {
     /* ────────── Inspector references ────────── */
     [Header("UI")]
-    public Transform listParent;          // VerticalLayoutGroup inside ScrollView
-    public GameObject worldCardPrefab;     // prefab with Name, OpenButton, DeleteButton
+    public Transform listParent;        // Content of ScrollView
+    public GameObject worldCardPrefab;   // Prefab with Name, OpenButton, DeleteButton
 
     public TMP_InputField nameField;
     public TMP_InputField widthField;
@@ -25,6 +25,7 @@ public class WorldHandler : MonoBehaviour
     private void Start()
     {
         createButton.onClick.AddListener(CreateWorld);
+        Debug.Log("sweet");
         refreshButton.onClick.AddListener(() => StartCoroutine(LoadWorlds()));
         logoutButton.onClick.AddListener(Logout);
 
@@ -43,10 +44,10 @@ public class WorldHandler : MonoBehaviour
         feedbackText.text = "";
         yield return APIManager.GetWorlds(apiResponse =>
         {
-            /* 1.  Clear existing cards */
+            /* 1. clear old cards */
             foreach (Transform child in listParent) Destroy(child.gameObject);
 
-            /* 2.  If request failed, show error & exit */
+            /* 2. check HTTP errors */
             if (!apiResponse.Success)
             {
                 feedbackText.text = "Error: " + apiResponse.Message;
@@ -54,41 +55,63 @@ public class WorldHandler : MonoBehaviour
                 return;
             }
 
-            /* 3.  Ensure we always parse something */
+            /* ── SAFE PARSING BLOCK ───────────────────────────────────── */
             string rawJson = string.IsNullOrWhiteSpace(apiResponse.Data) ? "[]" : apiResponse.Data;
+            string wrapped = "{\"items\":" + rawJson + "}";
+            WorldList parsed = JsonUtility.FromJson<WorldList>(wrapped)
+                              ?? new WorldList { items = new APIManager.WorldDto[0] };
 
-            /* 4.  Wrap array so JsonUtility can parse it */
-            string wrappedJson = "{\"items\":" + rawJson + "}";
-            WorldList worldList = JsonUtility.FromJson<WorldList>(wrappedJson)
-                                 ?? new WorldList { items = new APIManager.WorldDto[0] };
+            APIManager.WorldDto[] items = parsed.items;
+            /* ─────────────────────────────────────────────────────────── */
 
-            /* 5.  Show “No worlds yet.” if list empty */
-            if (worldList.items == null || worldList.items.Length == 0)
+            /* 3. empty list message */
+            if (items == null || items.Length == 0)
             {
+                Debug.Log("RAW JSON from /worlds: " + rawJson); // debug aid
                 feedbackText.text = "No worlds yet.";
                 return;
             }
 
-            /* 6.  Create a card for each world */
-            foreach (APIManager.WorldDto worldEntry in worldList.items)
+            /* 4. spawn one card per world */
+            foreach (APIManager.WorldDto world in items)
             {
+                if (worldCardPrefab == null)
+                {
+                    Debug.LogError("[WorldHandler] worldCardPrefab is NOT assigned in the Inspector!");
+                    break;   // nothing else will work
+                }
+
+                // 6-b instantiate the prefab under the Content transform
                 GameObject card = Instantiate(worldCardPrefab, listParent);
-                card.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = worldEntry.name;
+                Debug.Log($"[DEBUG] Spawned card GO = {card.name}  for world = {world.name}");
 
-                // OPEN
-                card.transform.Find("CreateButton").GetComponent<Button>()
-                     .onClick.AddListener(() => OpenWorld(worldEntry));
+                // 6-c find expected child objects
+                Transform nameTf = card.transform.Find("Name");
+                Transform openTf = card.transform.Find("OpenButton");   // child must be named OpenButton
+                Transform deleteTf = card.transform.Find("DeleteButton");
 
-                // DELETE
-                card.transform.Find("DeleteButton").GetComponent<Button>()
-                     .onClick.AddListener(() => StartCoroutine(APIManager.DeleteWorld(
-                         worldEntry.id,
-                         deleteResponse =>
-                         {
-                             Debug.Log($"DELETE /worlds/{worldEntry.id} → {deleteResponse.StatusCode}  {deleteResponse.Message}");
-                             if (deleteResponse.Success) Destroy(card);
-                             else feedbackText.text = "Delete error: " + deleteResponse.Message;
-                         })));
+                if (nameTf == null || openTf == null || deleteTf == null)
+                {
+                    Debug.LogError("[WorldHandler] Child objects missing!  " +
+                                   $"Name={nameTf != null}  OpenButton={openTf != null}  DeleteButton={deleteTf != null}");
+                    continue;   // skip this card until the prefab hierarchy is fixed
+                }
+
+                // 6-d apply text & hook buttons (unchanged)
+                nameTf.GetComponent<TextMeshProUGUI>().text = world.name;
+
+                openTf.GetComponent<Button>().onClick
+                      .AddListener(() => OpenWorld(world));
+
+                deleteTf.GetComponent<Button>().onClick
+                      .AddListener(() => StartCoroutine(APIManager.DeleteWorld(
+                          world.id,
+                          resp =>
+                          {
+                              Debug.Log($"DELETE /worlds/{world.id} → {resp.StatusCode}  {resp.Message}");
+                              if (resp.Success) Destroy(card);
+                              else feedbackText.text = "Delete error: " + resp.Message;
+                          })));
             }
         });
     }
@@ -98,13 +121,12 @@ public class WorldHandler : MonoBehaviour
         GameState.SelectedWorldId = selectedWorld.id;
         GameState.SelectedWorldWidth = selectedWorld.width;
         GameState.SelectedWorldHeight = selectedWorld.height;
-        SceneManager.LoadScene("Daycare");      // your editor scene
+        SceneManager.LoadScene("Daycare");
     }
 
     /* ────────── Create a new world ────────── */
     private void CreateWorld()
     {
-        /* Quick client-side numeric guard */
         if (!int.TryParse(widthField.text, out int width) ||
             !int.TryParse(heightField.text, out int height))
         {
@@ -125,7 +147,7 @@ public class WorldHandler : MonoBehaviour
                     return;
                 }
 
-                /* Map backend 400-messages to friendly UI text */
+                /* map backend messages */
                 string friendly = createResponse.Message;
                 if (friendly.Contains("Name length")) friendly = "Name must be 1–25 characters";
                 else if (friendly.Contains("Width")) friendly = "Width must be 20–200";
@@ -138,7 +160,7 @@ public class WorldHandler : MonoBehaviour
             }));
     }
 
-    /* ────────── Helper DTO wrapper for JSON parsing ────────── */
+    /* helper DTO so JsonUtility can parse array */
     [System.Serializable]
     private class WorldList
     {

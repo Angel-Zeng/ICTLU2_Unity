@@ -9,13 +9,12 @@ public static class APIManager
     private const string BASE_URL = "https://avansict2237024.azurewebsites.net/api";
 
     private static string jwtToken = "";
-    private static int id;          // (still unused, kept exactly as in your file)
+    private static int id;        // ← unchanged, still unused in your file
 
-    public static void LoadSavedToken()
-    {
+    public static void LoadSavedToken() =>
         jwtToken = PlayerPrefs.GetString("authToken", "");
-    }
 
+    /* ─────────── DTO for worlds list ─────────── */
     public struct WorldDto
     {
         public int id;
@@ -31,10 +30,25 @@ public static class APIManager
         PlayerPrefs.Save();
     }
 
+    /* ============================================================
+     *  HELPER: build a consistent APIResponse for every call
+     * ========================================================== */
+    private static APIResponse BuildResponse(UnityWebRequest request)
+    {
+        bool success = request.result == UnityWebRequest.Result.Success;
+        string message = success ? "OK" : request.downloadHandler.text; // REAL text on failure
+
+        return new APIResponse(
+            success,
+            message,
+            request.downloadHandler.text,
+            (int)request.responseCode);
+    }
+
     /* ─────────── REGISTER ─────────── */
     public static IEnumerator Register(string username,
                                        string password,
-                                       Action<APIResponse> resultCallback)
+                                       Action<APIResponse> callback)
     {
         string jsonBody = $"{{\"username\":\"{username}\",\"password\":\"{password}\"}}";
 
@@ -46,23 +60,13 @@ public static class APIManager
         request.SetRequestHeader("Content-Type", "application/json");
 
         yield return request.SendWebRequest();
-
-        bool success = request.result == UnityWebRequest.Result.Success;
-        string message = success ? "OK" : request.downloadHandler.text;
-
-        APIResponse response = new APIResponse(
-            success,
-            message,
-            request.downloadHandler.text,
-            (int)request.responseCode);
-
-        resultCallback?.Invoke(response);
+        callback?.Invoke(BuildResponse(request));
     }
 
     /* ─────────── LOGIN ─────────── */
     public static IEnumerator Login(string username,
                                     string password,
-                                    Action<APIResponse> resultCallback)
+                                    Action<APIResponse> callback)
     {
         string jsonBody = $"{{\"username\":\"{username}\",\"password\":\"{password}\"}}";
 
@@ -75,29 +79,22 @@ public static class APIManager
 
         yield return request.SendWebRequest();
 
-        bool success = request.result == UnityWebRequest.Result.Success;
-        string body = request.downloadHandler.text;
-        string message = success ? "OK" : body;
+        APIResponse response = BuildResponse(request);
 
-        if (success)
+        /* store token if login succeeded */
+        if (response.Success)
         {
-            AuthResponse auth = JsonUtility.FromJson<AuthResponse>(body);
+            AuthResponse auth = JsonUtility.FromJson<AuthResponse>(response.Data);
             jwtToken = auth.token;
             PlayerPrefs.SetString("authToken", jwtToken);
             PlayerPrefs.Save();
         }
 
-        APIResponse response = new APIResponse(
-            success,
-            message,
-            body,
-            (int)request.responseCode);
-
-        resultCallback?.Invoke(response);
+        callback?.Invoke(response);
     }
 
-    /* ─────────── GET WORLDS ─────────── */
-    public static IEnumerator GetWorlds(Action<APIResponse> resultCallback)
+    /* ─────────── LIST WORLDS ─────────── */
+    public static IEnumerator GetWorlds(Action<APIResponse> callback)
     {
         using UnityWebRequest request =
             new UnityWebRequest(BASE_URL + "/Worlds", "GET");
@@ -106,24 +103,14 @@ public static class APIManager
         AddAuthHeader(request);
 
         yield return request.SendWebRequest();
-
-        bool success = request.result == UnityWebRequest.Result.Success;
-        string message = success ? "OK" : request.downloadHandler.text;
-
-        APIResponse response = new APIResponse(
-            success,
-            message,
-            request.downloadHandler.text,
-            (int)request.responseCode);
-
-        resultCallback?.Invoke(response);
+        callback?.Invoke(BuildResponse(request));
     }
 
     /* ─────────── CREATE WORLD ─────────── */
     public static IEnumerator CreateWorld(string worldName,
                                           int width,
                                           int height,
-                                          Action<APIResponse> resultCallback)
+                                          Action<APIResponse> callback)
     {
         string jsonBody =
             $"{{\"name\":\"{worldName}\",\"width\":{width},\"height\":{height}}}";
@@ -137,41 +124,21 @@ public static class APIManager
         AddAuthHeader(request);
 
         yield return request.SendWebRequest();
-
-        bool success = request.result == UnityWebRequest.Result.Success;
-        string message = success ? "OK" : request.downloadHandler.text;
-
-        APIResponse response = new APIResponse(
-            success,
-            message,
-            request.downloadHandler.text,
-            (int)request.responseCode);
-
-        resultCallback?.Invoke(response);
+        callback?.Invoke(BuildResponse(request));
     }
 
     /* ─────────── DELETE WORLD ─────────── */
     public static IEnumerator DeleteWorld(int worldId,
-                                          Action<APIResponse> resultCallback)
+                                          Action<APIResponse> callback)
     {
         using UnityWebRequest request =
-            new UnityWebRequest($"{BASE_URL}/Worlds/{id}", "DELETE"); // URL unchanged
+            new UnityWebRequest($"{BASE_URL}/Worlds/{id}", "DELETE"); // URL untouched
 
         request.downloadHandler = new DownloadHandlerBuffer();
         AddAuthHeader(request);
 
         yield return request.SendWebRequest();
-
-        bool success = request.result == UnityWebRequest.Result.Success;
-        string message = success ? "OK" : request.downloadHandler.text;
-
-        APIResponse response = new APIResponse(
-            success,
-            message,
-            request.downloadHandler.text,
-            (int)request.responseCode);
-
-        resultCallback?.Invoke(response);
+        callback?.Invoke(BuildResponse(request));
     }
 
     /* ─────────── ADD OBJECT ─────────── */
@@ -179,12 +146,12 @@ public static class APIManager
                                         string type,
                                         float x,
                                         float y,
-                                        Action<APIResponse> resultCallback)
+                                        Action<APIResponse> callback)
     {
         string jsonBody = $"{{\"type\":\"{type}\",\"x\":{x},\"y\":{y}}}";
 
         using UnityWebRequest request =
-            new UnityWebRequest($"{BASE_URL}/Worlds/{id}/objects", "POST"); // URL unchanged
+            new UnityWebRequest($"{BASE_URL}/Worlds/{id}/objects", "POST"); // URL untouched
 
         request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonBody));
         request.downloadHandler = new DownloadHandlerBuffer();
@@ -192,20 +159,10 @@ public static class APIManager
         AddAuthHeader(request);
 
         yield return request.SendWebRequest();
-
-        bool success = request.result == UnityWebRequest.Result.Success;
-        string message = success ? "OK" : request.downloadHandler.text;
-
-        APIResponse response = new APIResponse(
-            success,
-            message,
-            request.downloadHandler.text,
-            (int)request.responseCode);
-
-        resultCallback?.Invoke(response);
+        callback?.Invoke(BuildResponse(request));
     }
 
-    /* ─────────── helper ─────────── */
+    /* ─────────── helper to add JWT ─────────── */
     private static void AddAuthHeader(UnityWebRequest request)
     {
         if (!string.IsNullOrEmpty(jwtToken))
@@ -213,7 +170,7 @@ public static class APIManager
     }
 }
 
-/* ─────────── DTOs ─────────── */
+/* ===== Response & DTOs ===== */
 [System.Serializable]
 public class APIResponse
 {
@@ -237,3 +194,4 @@ public class AuthResponse
 {
     public string token;
 }
+
