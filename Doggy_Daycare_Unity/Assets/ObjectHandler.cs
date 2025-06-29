@@ -15,9 +15,11 @@ public class ObjectHandler : MonoBehaviour
 
     private void Update()
     {
+        //it checks if a prefab is selected and if the mouse button is clicked
         if (currentPrefab == null) return;
         if (!Input.GetMouseButtonDown(0)) return;
 
+        //Get the world position of the mouse click and ignores z axis cuz it aint 3d
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         worldPosition.z = 0;
 
@@ -30,8 +32,10 @@ public class ObjectHandler : MonoBehaviour
             return;
         }
 
+        //spawns the dog or toy at the location
         Instantiate(currentPrefab, worldPosition, Quaternion.identity);
 
+        // Sends a request to the API to add the object
         string typeName = currentPrefab.name;
         StartCoroutine(APIManager.AddObject(
             GameState.SelectedWorldId, typeName, worldPosition.x, worldPosition.y,
