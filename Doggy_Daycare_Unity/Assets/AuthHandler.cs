@@ -7,8 +7,10 @@ public class AuthHandler : MonoBehaviour
 {
     public TMP_InputField usernameField;
     public TMP_InputField passwordField;
+
     public Button loginButton;
     public Button registerButton;
+
     public TextMeshProUGUI feedbackText;
 
     private void Start()
