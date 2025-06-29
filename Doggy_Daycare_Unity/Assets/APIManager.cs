@@ -6,15 +6,17 @@ using UnityEngine.Networking;
 
 public static class APIManager
 {
+    //mijn url website
     private const string BASE_URL = "https://avansict2237024.azurewebsites.net/api";
 
+    //voor jwt 
     private static string jwtToken = "";
-    private static int id;        // ← unchanged, still unused in your file
 
+    //laden van de opgeslagen token 
     public static void LoadSavedToken() =>
         jwtToken = PlayerPrefs.GetString("authToken", "");
 
-//THIS NEEDS TO BE SERIALIZABLE IT DOESNT WORK WITHOUT IT. 
+    //Had deze beter in een class kunnen zetten, maar voor nu is dit prima anders breek ik alles!!!
     [System.Serializable]
     public struct WorldDto
     {
@@ -24,6 +26,7 @@ public static class APIManager
         public int height;
     }
 
+    //Verwijdert de authtoken en verwijdert playerprefs
     public static void Logout()
     {
         jwtToken = "";
@@ -31,6 +34,7 @@ public static class APIManager
         PlayerPrefs.Save();
     }
 
+    // Bouwt een gestandaardiseerd API antwoord
     private static APIResponse BuildResponse(UnityWebRequest request)
     {
         bool success = request.result == UnityWebRequest.Result.Success;
@@ -43,7 +47,7 @@ public static class APIManager
             (int)request.responseCode);
     }
 
-//LETS REGISTER
+    //Registreren van nieuwe accounts
     public static IEnumerator Register(string username,
                                        string password,
                                        Action<APIResponse> callback)
@@ -61,7 +65,7 @@ public static class APIManager
         callback?.Invoke(BuildResponse(request));
     }
 
-    /* ─────────── LOGIN ─────────── */
+    //authenticeert login
     public static IEnumerator Login(string username,
                                     string password,
                                     Action<APIResponse> callback)
@@ -79,7 +83,7 @@ public static class APIManager
 
         APIResponse response = BuildResponse(request);
 
-        /* store token if login succeeded */
+        //slaat die lange token op als het goed is
         if (response.Success)
         {
             AuthResponse auth = JsonUtility.FromJson<AuthResponse>(response.Data);
@@ -91,7 +95,7 @@ public static class APIManager
         callback?.Invoke(response);
     }
 
-    /* ─────────── LIST WORLDS ─────────── */
+    //het laden van alle werelden die op een user staat
     public static IEnumerator GetWorlds(Action<APIResponse> callback)
     {
         using UnityWebRequest request =
@@ -104,7 +108,7 @@ public static class APIManager
         callback?.Invoke(BuildResponse(request));
     }
 
-    /* ─────────── CREATE WORLD ─────────── */
+    //aanmaken van een nieuwe wereld
     public static IEnumerator CreateWorld(string worldName,
                                           int width,
                                           int height,
@@ -125,12 +129,12 @@ public static class APIManager
         callback?.Invoke(BuildResponse(request));
     }
 
-    /* ─────────── DELETE WORLD ─────────── */
+    //verwijderen van een wereld die op de user staat
     public static IEnumerator DeleteWorld(int worldId,
                                           Action<APIResponse> callback)
     {
         using UnityWebRequest request =
-            new UnityWebRequest($"{BASE_URL}/Worlds/{worldId}", "DELETE"); // URL untouched
+            new UnityWebRequest($"{BASE_URL}/Worlds/{worldId}", "DELETE");
 
         request.downloadHandler = new DownloadHandlerBuffer();
         AddAuthHeader(request);
@@ -139,7 +143,7 @@ public static class APIManager
         callback?.Invoke(BuildResponse(request));
     }
 
-    /* ─────────── ADD OBJECT ─────────── */
+    //toevoegen van een object, maar ik denk dat ik iets verkeerds doe met het binden op unity of misschien serializen?
     public static IEnumerator AddObject(int worldId,
                                         string type,
                                         float x,
@@ -149,7 +153,7 @@ public static class APIManager
         string jsonBody = $"{{\"type\":\"{type}\",\"x\":{x},\"y\":{y}}}";
 
         using UnityWebRequest request =
-            new UnityWebRequest($"{BASE_URL}/Worlds/{id}/objects", "POST"); // URL untouched
+            new UnityWebRequest($"{BASE_URL}/Worlds/{worldId}/objects", "POST");
 
         request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonBody));
         request.downloadHandler = new DownloadHandlerBuffer();
@@ -160,27 +164,56 @@ public static class APIManager
         callback?.Invoke(BuildResponse(request));
     }
 
-    public static IEnumerator GetWorldObjects(int worldId,
-    System.Action<ObjectHandler.WorldWithObjects> cb)
+    //Nog meer DTO's voor wereld met objecten
+    //Had ik alsnog beter kunnen zetten in aparte DTO files tja 
+    [System.Serializable]
+    public class WorldWithObjects
     {
-        using UnityWebRequest req =
-            new UnityWebRequest($"{BASE_URL}/Worlds/{worldId}", "GET");
-
-        req.downloadHandler = new DownloadHandlerBuffer();
-        AddAuthHeader(req);
-        yield return req.SendWebRequest();
-
-        if (req.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError($"GET /Worlds/{id} failed: {req.downloadHandler.text}");
-            yield break;
-        }
-        var dto = JsonUtility.FromJson<ObjectHandler.WorldWithObjects>(
-                      req.downloadHandler.text);
-        cb?.Invoke(dto);
+        public WorldDto world;
+        public ObjectDto[] objects;
     }
 
-    /* ─────────── helper to add JWT ─────────── */
+    // Data Transfer Object voor wereldobjecten
+    [System.Serializable]
+    public class ObjectDto
+    {
+        public int id;
+        public string type;
+        public float x;
+        public float y;
+    }
+
+    //Ophalen van alle objecten in een wereld
+    public static IEnumerator GetWorldObjects(int worldId, Action<WorldWithObjects> callback)
+    {
+        using UnityWebRequest request = UnityWebRequest.Get($"{BASE_URL}/Worlds/{worldId}");
+        request.downloadHandler = new DownloadHandlerBuffer();
+        AddAuthHeader(request);
+
+        yield return request.SendWebRequest();
+
+        //checken of de request succesvol was
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError($"Failed to get world objects: {request.error}");
+            callback?.Invoke(null);
+            yield break;
+        }
+
+        // Probeer JSON response te parsen
+        try
+        {
+            WorldWithObjects data = JsonUtility.FromJson<WorldWithObjects>(request.downloadHandler.text);
+            callback?.Invoke(data);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"JSON parse error: {e.Message}");
+            callback?.Invoke(null);
+        }
+    }
+
+    //toevoegen van jwt token aan de request header
     private static void AddAuthHeader(UnityWebRequest request)
     {
         if (!string.IsNullOrEmpty(jwtToken))
@@ -188,7 +221,7 @@ public static class APIManager
     }
 }
 
-/* ===== Response & DTOs ===== */
+//mn repsonse class voor api calls
 [System.Serializable]
 public class APIResponse
 {
@@ -207,9 +240,9 @@ public class APIResponse
     }
 }
 
+// Authenticatie response specifiek voor tokens
 [System.Serializable]
 public class AuthResponse
 {
     public string token;
 }
-

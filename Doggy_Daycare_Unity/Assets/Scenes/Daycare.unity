@@ -1117,8 +1117,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
+  near clip plane: 0.1
+  far clip plane: 100
   field of view: 60
   orthographic: 1
   orthographic size: 10
@@ -1923,7 +1923,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 0.1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1736696176}
   - {fileID: 1919201039}
   - {fileID: 1704998834}
   - {fileID: 248025493}
@@ -2867,72 +2866,6 @@ RectTransform:
   m_AnchoredPosition: {x: -824.2, y: 439}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1001 &1736696175
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1598153054}
-    m_Modifications:
-    - target: {fileID: 513812920273013, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_Name
-      value: DachshundButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2406
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8462473722942442104, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 1469726581954787499, guid: 4b0177ea2a3a06f49a4a7579937e972a, type: 3}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
---- !u!4 &1736696176 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2054430993177477275, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
-  m_PrefabInstance: {fileID: 1736696175}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1875526800
 GameObject:
   m_ObjectHideFlags: 0

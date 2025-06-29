@@ -6,10 +6,9 @@ using UnityEngine.UI;
 
 public class WorldHandler : MonoBehaviour
 {
-    /* ────────── Inspector references ────────── */
-    [Header("UI")]
-    public Transform listParent;        // Content of ScrollView
-    public GameObject worldCardPrefab;   // Prefab with Name, OpenButton, DeleteButton
+    public Transform listParent;
+
+    public GameObject worldCardPrefab;
 
     public TMP_InputField nameField;
     public TMP_InputField widthField;
@@ -21,83 +20,76 @@ public class WorldHandler : MonoBehaviour
 
     public TextMeshProUGUI feedbackText;
 
-    /* ────────── Unity lifecycle ────────── */
     private void Start()
     {
+        //Koppelen van create, refresh en logout knoppen aan hun handlers
         createButton.onClick.AddListener(CreateWorld);
-        Debug.Log("sweet");
         refreshButton.onClick.AddListener(() => StartCoroutine(LoadWorlds()));
         logoutButton.onClick.AddListener(Logout);
 
+        //Laden van werelden
         StartCoroutine(LoadWorlds());
     }
 
+    //Wanneer uitloggen terug naar het startmenu
     private void Logout()
     {
         APIManager.Logout();
         SceneManager.LoadScene("StartMenu");
     }
 
-    /* ────────── Load & render the user’s worlds ────────── */
+    // laden van werelden en in de scrollview weergeven
     private IEnumerator LoadWorlds()
     {
         feedbackText.text = "";
         yield return APIManager.GetWorlds(apiResponse =>
         {
-            /* 1. clear old cards */
+            // De lijst leegmaken voor nieuwe werelden
             foreach (Transform child in listParent) Destroy(child.gameObject);
 
-            /* 2. check HTTP errors */
+            //Controleren op fouten in de responses
             if (!apiResponse.Success)
             {
                 feedbackText.text = "Error: " + apiResponse.Message;
-                Debug.Log($"GET /worlds → {apiResponse.StatusCode}  {apiResponse.Message}");
                 return;
             }
 
-            /* ── SAFE PARSING BLOCK ───────────────────────────────────── */
+            //Deze moest ik parsen zei Chris want ik kan niet direct in een array zetten
             string rawJson = string.IsNullOrWhiteSpace(apiResponse.Data) ? "[]" : apiResponse.Data;
             string wrapped = "{\"items\":" + rawJson + "}";
             WorldList parsed = JsonUtility.FromJson<WorldList>(wrapped)
                               ?? new WorldList { items = new APIManager.WorldDto[0] };
 
             APIManager.WorldDto[] items = parsed.items;
-            /* ─────────────────────────────────────────────────────────── */
 
-            /* 3. empty list message */
+            // Als items null of leeg zijn, geen werelden gevonden
             if (items == null || items.Length == 0)
             {
-                Debug.Log("RAW JSON from /worlds: " + rawJson); // debug aid
                 feedbackText.text = "No worlds yet.";
                 return;
             }
 
-            /* 4. spawn one card per world */
+            //Worldcard prefab voor elke wereld maken
             foreach (APIManager.WorldDto world in items)
             {
                 if (worldCardPrefab == null)
                 {
-                    Debug.LogError("[WorldHandler] worldCardPrefab is NOT assigned in the Inspector!");
-                    break;   // nothing else will work
+                    Debug.LogError("worldCardPrefab is NOT assigned!");
+                    break;
                 }
 
-                // 6-b instantiate the prefab under the Content transform
                 GameObject card = Instantiate(worldCardPrefab, listParent);
-                Debug.Log($"[DEBUG] Spawned card GO = {card.name}  for world = {world.name}");
 
-                // 6-c find expected child objects
+                //dit zijn de child objecten die in de worldcard prefab moeten zitten want die moet bij ekle wereld specifiek zijn
                 Transform nameTf = card.transform.Find("Name");
-                Transform openTf = card.transform.Find("OpenButton");   // child must be named OpenButton
+                Transform openTf = card.transform.Find("OpenButton");
                 Transform deleteTf = card.transform.Find("DeleteButton");
 
                 if (nameTf == null || openTf == null || deleteTf == null)
                 {
-                    Debug.LogError("[WorldHandler] Child objects missing!  " +
-                                   $"Name={nameTf != null}  OpenButton={openTf != null}  DeleteButton={deleteTf != null}");
-                    continue;   // skip this card until the prefab hierarchy is fixed
+                    Debug.LogError("KIND MIST");
+                    continue;
                 }
-
-                // 6-d apply text & hook buttons (unchanged)
                 nameTf.GetComponent<TextMeshProUGUI>().text = world.name;
 
                 openTf.GetComponent<Button>().onClick
@@ -108,7 +100,6 @@ public class WorldHandler : MonoBehaviour
                           world.id,
                           resp =>
                           {
-                              Debug.Log($"DELETE /worlds/{world.id} → {resp.StatusCode}  {resp.Message}");
                               if (resp.Success) Destroy(card);
                               else feedbackText.text = "Delete error: " + resp.Message;
                           })));
@@ -116,19 +107,20 @@ public class WorldHandler : MonoBehaviour
         });
     }
 
+    // Openen van de geselectereerde wereld 
     private void OpenWorld(APIManager.WorldDto selectedWorld)
     {
-        Debug.Log($"[OpenWorld] id={selectedWorld.id}");
+        //gegevens opslaan in de gamestate dtos
         GameState.SelectedWorldId = selectedWorld.id;
         GameState.SelectedWorldWidth = selectedWorld.width;
         GameState.SelectedWorldHeight = selectedWorld.height;
 
-        SceneManager.LoadScene("Daycare");   // load the editor scene
+        //Hier gaat ie naar de doggie daycare!!
+        SceneManager.LoadScene("Daycare");
     }
-
-    /* ────────── Create a new world ────────── */
     private void CreateWorld()
     {
+        //Parsen om te kijken of de velden niet leeg zijn of niet gewoon letters zijn
         if (!int.TryParse(widthField.text, out int width) ||
             !int.TryParse(heightField.text, out int height))
         {
@@ -136,33 +128,32 @@ public class WorldHandler : MonoBehaviour
             return;
         }
 
+        //Callen van API om wereld te maken 
         StartCoroutine(APIManager.CreateWorld(
             nameField.text, width, height,
             createResponse =>
             {
-                Debug.Log($"POST /worlds → Success={createResponse.Success}  Code={createResponse.StatusCode}  Msg={createResponse.Message}");
-
                 if (createResponse.Success)
                 {
                     feedbackText.text = "World created!";
-                    StartCoroutine(LoadWorlds());
-                    return;
+                    StartCoroutine(LoadWorlds()); //deze moet erin om de nieuwe werelden te laden
                 }
+                else
+                {
+                    //SOrry dit is heel lelijk ik had een case statement moeten gebruiken!!
+                    string friendly = createResponse.Message;
+                    if (friendly.Contains("Name length")) friendly = "Name must be 1-25 characters";
+                    else if (friendly.Contains("Width")) friendly = "Width must be 20-200";
+                    else if (friendly.Contains("Height")) friendly = "Height must be 10-100";
+                    else if (friendly.Contains("Max 5")) friendly = "You already have 5 worlds";
+                    else if (friendly.Contains("already in use")) friendly = "Name already exists";
 
-                /* map backend messages */
-                string friendly = createResponse.Message;
-                if (friendly.Contains("Name length")) friendly = "Name must be 1–25 characters";
-                else if (friendly.Contains("Width")) friendly = "Width must be 20–200";
-                else if (friendly.Contains("Height")) friendly = "Height must be 10–100";
-                else if (friendly.Contains("Max 5")) friendly = "You already have 5 worlds";
-                else if (friendly.Contains("already in use")) friendly = "Name already exists";
-                else friendly = "Error: " + friendly;
-
-                feedbackText.text = friendly;
+                    feedbackText.text = friendly;
+                }
             }));
     }
 
-    /* helper DTO so JsonUtility can parse array */
+    //Nogmaals dit had in een aparte class gemoeten :)
     [System.Serializable]
     private class WorldList
     {
