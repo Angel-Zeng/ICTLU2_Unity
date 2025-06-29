@@ -15,6 +15,14 @@ public class AuthHandler : MonoBehaviour
 
     private void Start()
     {
+        // 1) if token already stored, go straight to WorldsScene
+        APIManager.LoadSavedToken();
+        if (PlayerPrefs.HasKey("authToken"))
+        {
+            SceneManager.LoadScene("WorldsScene");
+            return;
+        }
+
         loginButton.onClick.AddListener(OnLoginClicked);
         registerButton.onClick.AddListener(OnRegisterClicked);
     }
@@ -34,7 +42,20 @@ public class AuthHandler : MonoBehaviour
         StartCoroutine(APIManager.Register(
             usernameField.text,
             passwordField.text,
-            OnAuthResult));
+            regResult =>
+            {
+                if (!regResult.Success)
+                {
+                    feedbackText.text = "Error: " + regResult.Message;
+                    return;
+                }
+
+                // Auto-login right after successful register
+                StartCoroutine(APIManager.Login(
+                    usernameField.text,
+                    passwordField.text,
+                    OnAuthResult));
+            }));
     }
 
     private void OnAuthResult(APIResponse result)
@@ -42,7 +63,7 @@ public class AuthHandler : MonoBehaviour
         if (result.Success)
         {
             feedbackText.text = "Success!";
-            SceneManager.LoadScene("WorldsScene");
+            SceneManager.LoadScene("WorldMenu");
         }
         else
         {
