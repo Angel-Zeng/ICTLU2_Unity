@@ -1,3 +1,8 @@
+﻿using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+
+WorldHandler.cs
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -6,8 +11,8 @@ using UnityEngine.UI;
 
 public class WorldHandler : MonoBehaviour
 {
-    public Transform listParent; 
-    public GameObject worldCardPrefab; 
+    public Transform listParent;
+    public GameObject worldCardPrefab;
 
     public TMP_InputField nameField;
     public TMP_InputField widthField;
@@ -33,13 +38,13 @@ public class WorldHandler : MonoBehaviour
     private void Logout()
     {
         APIManager.Logout();
-        SceneManager.LoadScene("LoginScene");
+        SceneManager.LoadScene("StartMenu");
     }
 
     // Here it loads the worlds from the backend API and gives UI feedback.
     private IEnumerator LoadWorlds()
     {
-        feedbackText.text = "Loading...";
+        feedbackText.text = "";
         yield return APIManager.GetWorlds(result =>
         {
             foreach (Transform card in listParent) Destroy(card.gameObject);
@@ -50,7 +55,7 @@ public class WorldHandler : MonoBehaviour
                 return;
             }
 
-            // JsonUtility can�t parse bare arrays, so I wrapped it 
+            // JsonUtility can’t parse bare arrays, so I wrapped it 
             string wrapped = "{\"items\":" + result.Data + "}";
             WorldList temporary = JsonUtility.FromJson<WorldList>(wrapped);
 
@@ -83,7 +88,7 @@ public class WorldHandler : MonoBehaviour
         GameState.SelectedWorldId = world.id;
         GameState.SelectedWorldWidth = world.width;
         GameState.SelectedWorldHeight = world.height;
-        SceneManager.LoadScene("EditorScene");
+        SceneManager.LoadScene("Daycase");
     }
 
     //Here this method is called when user clicks to create a world.
@@ -115,4 +120,3 @@ public class WorldHandler : MonoBehaviour
         public APIManager.WorldDto[] items;
     }
 }
-

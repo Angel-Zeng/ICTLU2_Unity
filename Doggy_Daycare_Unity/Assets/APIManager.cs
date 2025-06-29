@@ -11,6 +11,7 @@ public static class APIManager
     private const string BASE_URL = "https://avansict2237024.azurewebsites.net/api";
 
     private static string jwtToken = "";
+    private static int id;
 
     public static void LoadSavedToken()
     {
@@ -26,8 +27,8 @@ public static class APIManager
     }
     public static void Logout()
     {
-        jwtToken = "";                    // forget in memory
-        PlayerPrefs.DeleteKey("authToken"); // forget on disk
+        jwtToken = "";       
+        PlayerPrefs.DeleteKey("authToken"); 
         PlayerPrefs.Save();
     }
 
@@ -97,7 +98,7 @@ public static class APIManager
     public static IEnumerator GetWorlds(Action<APIResponse> resultCallback)
     {
         using UnityWebRequest request =
-            new UnityWebRequest(BASE_URL + "/worlds", "GET");
+            new UnityWebRequest(BASE_URL + "/Worlds", "GET");
 
         request.downloadHandler = new DownloadHandlerBuffer();
         AddAuthHeader(request);
@@ -123,7 +124,7 @@ public static class APIManager
             $"{{\"name\":\"{worldName}\",\"width\":{width},\"height\":{height}}}";
 
         using UnityWebRequest request =
-            new UnityWebRequest(BASE_URL + "/worlds", "POST");
+            new UnityWebRequest(BASE_URL + "/Worlds", "POST");
 
         request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonBody));
         request.downloadHandler = new DownloadHandlerBuffer();
@@ -146,7 +147,7 @@ public static class APIManager
                                           Action<APIResponse> resultCallback)
     {
         using UnityWebRequest request =
-            new UnityWebRequest($"{BASE_URL}/worlds/{worldId}", "DELETE");
+            new UnityWebRequest($"{BASE_URL}/Worlds/{id}", "DELETE");
 
         request.downloadHandler = new DownloadHandlerBuffer();
         AddAuthHeader(request);
@@ -172,7 +173,7 @@ public static class APIManager
             $"{{\"type\":\"{type}\",\"x\":{x},\"y\":{y}}}";
 
         using UnityWebRequest request =
-            new UnityWebRequest($"{BASE_URL}/worlds/{worldId}/objects", "POST");
+            new UnityWebRequest($"{BASE_URL}/Worlds/{id}/objects", "POST");
 
         request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonBody));
         request.downloadHandler = new DownloadHandlerBuffer();

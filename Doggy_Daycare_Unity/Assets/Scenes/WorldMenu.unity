@@ -1213,6 +1213,7 @@ GameObject:
   - component: {fileID: 812358984}
   - component: {fileID: 812358983}
   - component: {fileID: 812358982}
+  - component: {fileID: 812358986}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1311,6 +1312,27 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &812358986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812358981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38787e4956074c74392701e88a58bf9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listParent: {fileID: 1233107282}
+  worldCardPrefab: {fileID: 1941154288971390478, guid: b067b11688c50c341a63df0d10831140, type: 3}
+  nameField: {fileID: 2109992845}
+  widthField: {fileID: 23228148}
+  heightField: {fileID: 1472413843}
+  createButton: {fileID: 1949172284}
+  refreshButton: {fileID: 355424673}
+  logoutButton: {fileID: 942463084}
+  feedbackText: {fileID: 1011847986}
 --- !u!1 &813136094
 GameObject:
   m_ObjectHideFlags: 0
@@ -1675,7 +1697,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -607.1, y: 112.4}
+  m_AnchoredPosition: {x: -201.6, y: 363.9}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1011847986
@@ -1810,7 +1832,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000037701004}
+  m_AnchoredPosition: {x: 0, y: 0.0009987887}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1233107283
@@ -2839,7 +2861,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1690850535}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 604.125, y: 286.375, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2950,7 +2972,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 362299307}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999648
+  m_Size: 0.99998426
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
