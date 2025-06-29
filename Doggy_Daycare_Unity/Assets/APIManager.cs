@@ -14,7 +14,8 @@ public static class APIManager
     public static void LoadSavedToken() =>
         jwtToken = PlayerPrefs.GetString("authToken", "");
 
-    /* ─────────── DTO for worlds list ─────────── */
+//THIS NEEDS TO BE SERIALIZABLE IT DOESNT WORK WITHOUT IT. 
+    [System.Serializable]
     public struct WorldDto
     {
         public int id;
