@@ -31,13 +31,10 @@ public static class APIManager
         PlayerPrefs.Save();
     }
 
-    /* ============================================================
-     *  HELPER: build a consistent APIResponse for every call
-     * ========================================================== */
     private static APIResponse BuildResponse(UnityWebRequest request)
     {
         bool success = request.result == UnityWebRequest.Result.Success;
-        string message = success ? "OK" : request.downloadHandler.text; // REAL text on failure
+        string message = success ? "OK" : request.downloadHandler.text;
 
         return new APIResponse(
             success,
@@ -46,7 +43,7 @@ public static class APIManager
             (int)request.responseCode);
     }
 
-    /* ─────────── REGISTER ─────────── */
+//LETS REGISTER
     public static IEnumerator Register(string username,
                                        string password,
                                        Action<APIResponse> callback)
@@ -161,6 +158,26 @@ public static class APIManager
 
         yield return request.SendWebRequest();
         callback?.Invoke(BuildResponse(request));
+    }
+
+    public static IEnumerator GetWorldObjects(int worldId,
+    System.Action<ObjectHandler.WorldWithObjects> cb)
+    {
+        using UnityWebRequest req =
+            new UnityWebRequest($"{BASE_URL}/Worlds/{worldId}", "GET");
+
+        req.downloadHandler = new DownloadHandlerBuffer();
+        AddAuthHeader(req);
+        yield return req.SendWebRequest();
+
+        if (req.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError($"GET /worlds/{worldId} failed: {req.downloadHandler.text}");
+            yield break;
+        }
+        var dto = JsonUtility.FromJson<ObjectHandler.WorldWithObjects>(
+                      req.downloadHandler.text);
+        cb?.Invoke(dto);
     }
 
     /* ─────────── helper to add JWT ─────────── */
