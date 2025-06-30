@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 //Dit script heeft mijn heeft mijn mentale gezondheid naar een dieptepunt gebracht, de honden willen niet. 
 public class ObjectHandler : MonoBehaviour
 {
-    public GameObject dogPrefab; 
+    public GameObject dogPrefab;
     public GameObject toyPrefab;
 
     public TextMeshProUGUI worldNameText;
@@ -18,31 +18,36 @@ public class ObjectHandler : MonoBehaviour
     private GameObject prefabToPlace;
     private bool isDragging = false;
     private GameObject dragPreview;
+    private Camera mainCamera;
 
     private void Start()
     {
+        mainCamera = Camera.main;
         StartCoroutine(LoadWorldThenEnableDrag()); //laden van wereld en activeren van die drag functie
     }
-
 
     private IEnumerator LoadWorldThenEnableDrag()
     {
         //Wereld moet geladen zijn en mag ook niet 0 zijn want de index begint daar niet
         if (GameState.SelectedWorldId == 0)
         {
-            feedbackText.text = "No world on 0";
+            feedbackText.text = "Geen wereld gevonden met 0";
             yield break;
         }
 
-        int wid = GameState.SelectedWorldId;
+        int worldId = GameState.SelectedWorldId;
 
         //Laden van wereldgegevens
-        yield return APIManager.GetWorldObjects(wid, data =>
+        yield return APIManager.GetWorldObjects(worldId, data =>
         {
-            if (data == null) return;
+            if (data == null)
+            {
+                feedbackText.text = "Fout bij het laden van de wereld.";
+                return;
+            }
 
             // De text updaten met de gekozen wereldnaam
-            worldNameText.text = $"{data.world.name}";
+            worldNameText.text = data.world.name;
 
             //de grenzen van de wereld aangeven
             DrawBorder(data.world.width, data.world.height);
@@ -53,6 +58,8 @@ public class ObjectHandler : MonoBehaviour
                 GameObject prefab = obj.type == "Dog" ? dogPrefab : toyPrefab;
                 Instantiate(prefab, new Vector3(obj.x, obj.y, 0), Quaternion.identity);
             }
+
+            feedbackText.text = "Sleep een hond of speeltje!";
         });
     }
 
@@ -70,9 +77,10 @@ public class ObjectHandler : MonoBehaviour
         });
     }
 
-    //Dit werkt niet D: het zou moeten werken maar de honden willen niet :(
-    public void BeginDragDog() => StartDrag(dogPrefab);
-    //ja hetzelfde weer
+    public void BeginDragDog()
+    {
+        StartDrag(dogPrefab);
+    }
     public void BeginDragToy() => StartDrag(toyPrefab);
 
     //De sleepfunc
@@ -82,6 +90,24 @@ public class ObjectHandler : MonoBehaviour
 
         prefabToPlace = prefab;
         isDragging = true;
+
+        dragPreview = Instantiate(prefab);
+        dragPreview.name = "DragPreview";
+
+        SetAlpha(dragPreview, 0.5f); // even semi maken 
+
+        // Colliders uitschakelen tijdens het slepen
+        var colliders = dragPreview.GetComponentsInChildren<Collider2D>();
+        foreach (var collider in colliders)
+        {
+            collider.enabled = false;
+        }
+
+        // Voeg tijdelijk een BoxCollider2D toe voor betere hit detection
+        if (dragPreview.GetComponent<Collider2D>() == null)
+        {
+            dragPreview.AddComponent<BoxCollider2D>();
+        }
     }
 
     // Update loop voor slepen
@@ -91,14 +117,27 @@ public class ObjectHandler : MonoBehaviour
 
         //positie van de muisklik krijgen
         Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10f;
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-        worldPos.z = 0;
+        mousePos.z = 10f; // Belangrijk: afstand tot camera instellen
+        Vector3 worldPos = mainCamera.ScreenToWorldPoint(mousePos);
+        worldPos.z = 0; // Zet Z op 0 voor 2D
 
-        // bij het loslaten van de muis, plaat object
+        // Update preview positie
+        if (dragPreview != null)
+        {
+            dragPreview.transform.position = worldPos;
+        }
+
+        // bij het loslaten van de muis, plaats object
         if (Input.GetMouseButtonUp(0))
         {
             TryPlaceObject(worldPos);
+        }
+
+        // Annuleren met rechtermuis
+        if (Input.GetMouseButtonDown(1))
+        {
+            CancelDrag();
+            feedbackText.text = "Plaatsing geannuleerd";
         }
     }
 
@@ -106,9 +145,9 @@ public class ObjectHandler : MonoBehaviour
     private void TryPlaceObject(Vector3 position)
     {
         // kijken of er een prefab is om te plaatsten 
-        if (RectTransformUtility.RectangleContainsScreenPoint(trashZone, Input.mousePosition))
+        if (IsOverTrashCan())
         {
-            feedbackText.text = "Placement cancelled";
+            feedbackText.text = "Plaatsing geannuleerd!";
             CancelDrag();
             return;
         }
@@ -120,7 +159,7 @@ public class ObjectHandler : MonoBehaviour
 
         if (!inBounds)
         {
-            feedbackText.text = "Stay within bounds!";
+            feedbackText.text = "Blijf binnen de grenzen!";
             CancelDrag();
             return;
         }
@@ -132,20 +171,60 @@ public class ObjectHandler : MonoBehaviour
         StartCoroutine(APIManager.AddObject(
             GameState.SelectedWorldId,
             prefabToPlace == dogPrefab ? "Dog" : "Toy",
-            position.x, position.y,
-            result => feedbackText.text = result.Success ? "Placed!" : "Error: " + result.Message));
+            position.x,
+            position.y,
+            result =>
+            {
+                feedbackText.text = result.Success
+                    ? "Succesvol geplaatst!"
+                    : "Oops: " + result.Message;
+            }));
 
         CancelDrag();
     }
 
-    //Drag annuleren
+    private bool IsOverTrashCan()
+    {
+        // Controleer of de muis over de prullenbak is
+        if (RectTransformUtility.RectangleContainsScreenPoint(
+            trashZone,
+            Input.mousePosition,
+            mainCamera))
+        {
+            // Geef visuele feedback
+            if (dragPreview != null)
+            {
+                var renderer = dragPreview.GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                {
+                    renderer.color = new Color(1, 0.5f, 0.5f, 0.5f);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     private void CancelDrag()
     {
         isDragging = false;
         prefabToPlace = null;
 
-        if (dragPreview) Destroy(dragPreview);
-        dragPreview = null;
+        if (dragPreview != null)
+        {
+            Destroy(dragPreview);
+            dragPreview = null;
+        }
     }
 
+    private void SetAlpha(GameObject obj, float alpha)
+    {
+        var renderer = obj.GetComponent<SpriteRenderer>();
+        if (renderer != null)
+        {
+            Color color = renderer.color;
+            color.a = alpha;
+            renderer.color = color;
+        }
+    }
 }

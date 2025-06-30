@@ -22,7 +22,7 @@ public class AuthHandler : MonoBehaviour
     }
     private void OnLoginClicked()
     {
-        feedbackText.text = "Logging in... ";
+        feedbackText.text = "Inloggen... ";
         StartCoroutine(APIManager.Login(
             usernameField.text,
             passwordField.text,
@@ -31,7 +31,7 @@ public class AuthHandler : MonoBehaviour
 
     private void OnRegisterClicked()
     {
-        feedbackText.text = "Creating account...";
+        feedbackText.text = "Account wordt gemaakt...";
         StartCoroutine(APIManager.Register(
             usernameField.text,
             passwordField.text,
@@ -40,7 +40,7 @@ public class AuthHandler : MonoBehaviour
                 //COntroleert hier op fouten
                 if (!registerResult.Success)
                 {
-                    feedbackText.text = "Error: " + registerResult.Message;
+                    feedbackText.text = "Oeps: " + registerResult.Message;
                     return;
                 }
 
@@ -62,7 +62,7 @@ public class AuthHandler : MonoBehaviour
         }
         else
         {
-            feedbackText.text = "Error: " + result.Message;
+            feedbackText.text = "Oops: " + result.Message;
         }
     }
 }

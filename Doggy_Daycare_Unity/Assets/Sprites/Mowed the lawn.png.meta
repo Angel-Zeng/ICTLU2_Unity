@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Mowed the lawn_0: -8680202139655354688
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

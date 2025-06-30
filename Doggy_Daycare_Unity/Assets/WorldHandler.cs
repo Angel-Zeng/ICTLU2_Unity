@@ -50,7 +50,7 @@ public class WorldHandler : MonoBehaviour
             //Controleren op fouten in de responses
             if (!apiResponse.Success)
             {
-                feedbackText.text = "Error: " + apiResponse.Message;
+                feedbackText.text = "Oops: " + apiResponse.Message;
                 return;
             }
 
@@ -65,7 +65,7 @@ public class WorldHandler : MonoBehaviour
             // Als items null of leeg zijn, geen werelden gevonden
             if (items == null || items.Length == 0)
             {
-                feedbackText.text = "No worlds yet.";
+                feedbackText.text = "Nog geen werelden.";
                 return;
             }
 
@@ -124,7 +124,7 @@ public class WorldHandler : MonoBehaviour
         if (!int.TryParse(widthField.text, out int width) ||
             !int.TryParse(heightField.text, out int height))
         {
-            feedbackText.text = "Width & Height must be numbers";
+            feedbackText.text = "Width en height moeten nummers bevatten.";
             return;
         }
 
@@ -142,11 +142,11 @@ public class WorldHandler : MonoBehaviour
                 {
                     //SOrry dit is heel lelijk ik had een case statement moeten gebruiken!!
                     string friendly = createResponse.Message;
-                    if (friendly.Contains("Name length")) friendly = "Name must be 1-25 characters";
-                    else if (friendly.Contains("Width")) friendly = "Width must be 20-200";
-                    else if (friendly.Contains("Height")) friendly = "Height must be 10-100";
-                    else if (friendly.Contains("Max 5")) friendly = "You already have 5 worlds";
-                    else if (friendly.Contains("already in use")) friendly = "Name already exists";
+                    if (friendly.Contains("Name length")) friendly = "Naam moet tussen de 1-25 karakters zijn.";
+                    else if (friendly.Contains("Width")) friendly = "Width moet tussen de 20-200 zitten";
+                    else if (friendly.Contains("Height")) friendly = "Height moet tussen de 10-100 zitten";
+                    else if (friendly.Contains("Max 5")) friendly = "Je hebt al 5 werelden!";
+                    else if (friendly.Contains("already in use")) friendly = "Naam bestaat al! Kies iets anders!";
 
                     feedbackText.text = friendly;
                 }
