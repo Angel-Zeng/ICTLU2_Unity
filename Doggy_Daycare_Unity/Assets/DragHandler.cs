@@ -1,20 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class DragHelper : MonoBehaviour
+public class DragHelper : MonoBehaviour, IPointerDownHandler
 {
+    [Tooltip("Prefab that will be dragged when this icon is pressed")]
+    public GameObject prefab;
     public ObjectHandler handler;
 
-    // Voor specifieke hondenrassen
-    public void StartDogDrag(int breedIndex)
-    {
-        if (handler != null)
-            handler.SelectDogBreed(breedIndex);
-    }
 
-    // Voor specifieke speeltjes
-    public void StartToyDrag(int toyIndex)
+    public void OnPointerDown(PointerEventData eventData)
     {
-        if (handler != null)
-            handler.SelectToyType(toyIndex);
+        if (handler != null && prefab != null)
+            handler.StartDrag(prefab);
     }
 }

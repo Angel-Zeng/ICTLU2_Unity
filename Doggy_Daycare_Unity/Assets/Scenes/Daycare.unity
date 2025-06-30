@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 31753492}
   - component: {fileID: 31753491}
   - component: {fileID: 31753494}
-  - component: {fileID: 31753495}
+  - component: {fileID: 31753496}
   m_Layer: 5
   m_Name: FrisbeeButton
   m_TagString: Untagged
@@ -300,7 +300,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &31753495
+--- !u!114 &31753496
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -309,26 +309,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 31753489}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bcccaebf3af99d443aed847911b48dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1516450412}
-          m_TargetAssemblyTypeName: ObjectHandler, Assembly-CSharp
-          m_MethodName: SelectToyType
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 2
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  prefab: {fileID: 513812920273013, guid: 6b9ceaa3758e5834da12c7dff5c3a744, type: 3}
+  handler: {fileID: 1516450412}
 --- !u!1 &121695387
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,7 +327,7 @@ GameObject:
   - component: {fileID: 121695390}
   - component: {fileID: 121695389}
   - component: {fileID: 121695392}
-  - component: {fileID: 121695393}
+  - component: {fileID: 121695394}
   m_Layer: 5
   m_Name: BallButton
   m_TagString: Untagged
@@ -510,7 +495,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &121695393
+--- !u!114 &121695394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -519,26 +504,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 121695387}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bcccaebf3af99d443aed847911b48dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1516450412}
-          m_TargetAssemblyTypeName: ObjectHandler, Assembly-CSharp
-          m_MethodName: SelectToyType
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  prefab: {fileID: 513812920273013, guid: c91588ac5d8b32549ac130e3cdce9372, type: 3}
+  handler: {fileID: 1516450412}
 --- !u!1 &146201854
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,7 +794,7 @@ GameObject:
   - component: {fileID: 248025495}
   - component: {fileID: 248025494}
   - component: {fileID: 248025497}
-  - component: {fileID: 248025498}
+  - component: {fileID: 248025499}
   m_Layer: 5
   m_Name: ShibaButton
   m_TagString: Untagged
@@ -992,7 +962,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &248025498
+--- !u!114 &248025499
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1001,26 +971,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 248025492}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bcccaebf3af99d443aed847911b48dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1516450412}
-          m_TargetAssemblyTypeName: ObjectHandler, Assembly-CSharp
-          m_MethodName: SelectDogBreed
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 2
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  prefab: {fileID: 513812920273013, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
+  handler: {fileID: 1516450412}
 --- !u!1 &677832214
 GameObject:
   m_ObjectHideFlags: 0
@@ -1398,7 +1353,7 @@ GameObject:
   - component: {fileID: 1092175608}
   - component: {fileID: 1092175607}
   - component: {fileID: 1092175610}
-  - component: {fileID: 1092175611}
+  - component: {fileID: 1092175612}
   m_Layer: 5
   m_Name: BoneButton
   m_TagString: Untagged
@@ -1566,7 +1521,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1092175611
+--- !u!114 &1092175612
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1575,26 +1530,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1092175605}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bcccaebf3af99d443aed847911b48dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1516450412}
-          m_TargetAssemblyTypeName: ObjectHandler, Assembly-CSharp
-          m_MethodName: SelectToyType
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 1
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  prefab: {fileID: 513812920273013, guid: cbdec07d58d554541a55f1ef89ad44b9, type: 3}
+  handler: {fileID: 1516450412}
 --- !u!1 &1198866904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1608,7 +1548,7 @@ GameObject:
   - component: {fileID: 1198866907}
   - component: {fileID: 1198866906}
   - component: {fileID: 1198866909}
-  - component: {fileID: 1198866910}
+  - component: {fileID: 1198866911}
   m_Layer: 5
   m_Name: PoodleButton
   m_TagString: Untagged
@@ -1776,7 +1716,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1198866910
+--- !u!114 &1198866911
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1785,26 +1725,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1198866904}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bcccaebf3af99d443aed847911b48dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1516450412}
-          m_TargetAssemblyTypeName: ObjectHandler, Assembly-CSharp
-          m_MethodName: SelectDogBreed
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 3
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  prefab: {fileID: 8951362535962638649, guid: c6579ae8fa43a4342be6cdf54c2f283e, type: 3}
+  handler: {fileID: 1516450412}
 --- !u!1 &1516450406
 GameObject:
   m_ObjectHideFlags: 0
@@ -2795,26 +2720,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1704998833}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bcccaebf3af99d443aed847911b48dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1516450412}
-          m_TargetAssemblyTypeName: ObjectHandler, Assembly-CSharp
-          m_MethodName: SelectDogBreed
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 1
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  prefab: {fileID: 8951362535962638649, guid: 32692935be01d8847b3af0fbfb0ae119, type: 3}
+  handler: {fileID: 1516450412}
 --- !u!1 &1710328824
 GameObject:
   m_ObjectHideFlags: 0
@@ -3285,26 +3195,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1919201038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bcccaebf3af99d443aed847911b48dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1516450412}
-          m_TargetAssemblyTypeName: ObjectHandler, Assembly-CSharp
-          m_MethodName: SelectDogBreed
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  prefab: {fileID: 8951362535962638649, guid: 97ec80814f9f4b2489a66dcfd3657bdc, type: 3}
+  handler: {fileID: 1516450412}
 --- !u!1 &1972860234
 GameObject:
   m_ObjectHideFlags: 0

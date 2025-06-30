@@ -134,7 +134,7 @@ public class ObjectHandler : MonoBehaviour
     }
 
     //De sleepfunc
-    private void StartDrag(GameObject prefab)
+    public void StartDrag(GameObject prefab)
     {
         if (isDragging) return;
 
