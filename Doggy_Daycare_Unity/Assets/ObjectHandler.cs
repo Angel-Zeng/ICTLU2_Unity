@@ -7,8 +7,18 @@ using UnityEngine.EventSystems;
 //Dit script heeft mijn heeft mijn mentale gezondheid naar een dieptepunt gebracht, de honden willen niet. 
 public class ObjectHandler : MonoBehaviour
 {
-    public GameObject dogPrefab;
-    public GameObject toyPrefab;
+    // Enums voor type objectjes
+    public enum DogBreed { Dachshund, FrenchBulldog, ShibaInu, Poodle }
+    public enum ToyType { Ball, Bone, Frisbee }
+
+    public GameObject dachshundPrefab;
+    public GameObject frenchBulldogPrefab;
+    public GameObject shibaInuPrefab;
+    public GameObject poodlePrefab;
+
+    public GameObject ballPrefab;
+    public GameObject bonePrefab;
+    public GameObject frisbeePrefab;
 
     public TextMeshProUGUI worldNameText;
     public TextMeshProUGUI feedbackText;
@@ -52,10 +62,11 @@ public class ObjectHandler : MonoBehaviour
             //de grenzen van de wereld aangeven
             DrawBorder(data.world.width, data.world.height);
 
-            // Instantieer honden en speeltjes
+            // Instantieer honden en speeltjes (MOET AANGEPAST WORDEN VOOR MEERDERE TYPES)
             foreach (var obj in data.objects)
             {
-                GameObject prefab = obj.type == "Dog" ? dogPrefab : toyPrefab;
+                // Voor nu gebruiken we standaard prefabs - later aanpassen
+                GameObject prefab = obj.type.StartsWith("Dog") ? dachshundPrefab : ballPrefab;
                 Instantiate(prefab, new Vector3(obj.x, obj.y, 0), Quaternion.identity);
             }
 
@@ -77,13 +88,52 @@ public class ObjectHandler : MonoBehaviour
         });
     }
 
-    public void BeginDragDog()
+    // Nieuwe methodes voor selectie
+    public void SelectDogBreed(int breedIndex)
     {
-        StartDrag(dogPrefab);
+        StartDrag(GetDogPrefab((DogBreed)breedIndex));
     }
-    public void BeginDragToy() => StartDrag(toyPrefab);
 
-    //De sleepfunc
+    public void SelectToyType(int toyIndex)
+    {
+        StartDrag(GetToyPrefab((ToyType)toyIndex));
+    }
+
+    private GameObject GetDogPrefab(DogBreed breed)
+    {
+        switch (breed)
+        {
+            case DogBreed.Dachshund:
+                return dachshundPrefab;
+            case DogBreed.FrenchBulldog:
+                return frenchBulldogPrefab;
+            case DogBreed.ShibaInu:
+                return shibaInuPrefab;
+            case DogBreed.Poodle:
+                return poodlePrefab;
+            default:
+                Debug.LogError("Onbekend hondenras");
+                return dachshundPrefab;
+        }
+    }
+
+    private GameObject GetToyPrefab(ToyType toy)
+    {
+        switch (toy)
+        {
+            case ToyType.Ball:
+                return ballPrefab;
+            case ToyType.Bone:
+                return bonePrefab;
+            case ToyType.Frisbee:
+                return frisbeePrefab;
+            default:
+                Debug.LogError("Onbekend speeltje");
+                return ballPrefab;
+        }
+    }
+
+    //De sleepfunctie
     private void StartDrag(GameObject prefab)
     {
         if (isDragging) return;
@@ -108,6 +158,8 @@ public class ObjectHandler : MonoBehaviour
         {
             dragPreview.AddComponent<BoxCollider2D>();
         }
+
+        Debug.Log("StartDrag aangeroepen met: " + prefab.name);
     }
 
     // Update loop voor slepen
@@ -139,6 +191,9 @@ public class ObjectHandler : MonoBehaviour
             CancelDrag();
             feedbackText.text = "Plaatsing geannuleerd";
         }
+
+        if (isDragging)
+            Debug.Log("Dragging: " + dragPreview.transform.position);
     }
 
     // Probeert object te plaatsen
@@ -167,10 +222,12 @@ public class ObjectHandler : MonoBehaviour
         // PLAATSEN!!
         Instantiate(prefabToPlace, position, Quaternion.identity);
 
+        string objectType = DetermineObjectType(prefabToPlace);
+
         //De informatie naar de server sturen
         StartCoroutine(APIManager.AddObject(
             GameState.SelectedWorldId,
-            prefabToPlace == dogPrefab ? "Dog" : "Toy",
+            objectType,
             position.x,
             position.y,
             result =>
@@ -181,6 +238,19 @@ public class ObjectHandler : MonoBehaviour
             }));
 
         CancelDrag();
+    }
+
+    private string DetermineObjectType(GameObject prefab)
+    {
+        if (prefab == dachshundPrefab) return "DachshundPrefab";
+        if (prefab == frenchBulldogPrefab) return "FrenchiePrefab";
+        if (prefab == shibaInuPrefab) return "ShibaPrefab";
+        if (prefab == poodlePrefab) return "PoodlePrefab";
+        if (prefab == ballPrefab) return "BallPrefab";
+        if (prefab == bonePrefab) return "BonePrefab";
+        if (prefab == frisbeePrefab) return "FrisbeePrefab";
+
+        return "Unknown";
     }
 
     private bool IsOverTrashCan()
