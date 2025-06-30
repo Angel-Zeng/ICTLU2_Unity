@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 //Dit script heeft mijn heeft mijn mentale gezondheid naar een dieptepunt gebracht, de honden willen niet. 
 public class ObjectHandler : MonoBehaviour
 {
-    // Enums voor type objectjes
+    // Enums voor type selectie
     public enum DogBreed { Dachshund, FrenchBulldog, ShibaInu, Poodle }
     public enum ToyType { Ball, Bone, Frisbee }
 
@@ -133,7 +133,7 @@ public class ObjectHandler : MonoBehaviour
         }
     }
 
-    //De sleepfunctie
+    //De sleepfunc
     private void StartDrag(GameObject prefab)
     {
         if (isDragging) return;
@@ -158,8 +158,6 @@ public class ObjectHandler : MonoBehaviour
         {
             dragPreview.AddComponent<BoxCollider2D>();
         }
-
-        Debug.Log("StartDrag aangeroepen met: " + prefab.name);
     }
 
     // Update loop voor slepen
@@ -191,9 +189,6 @@ public class ObjectHandler : MonoBehaviour
             CancelDrag();
             feedbackText.text = "Plaatsing geannuleerd";
         }
-
-        if (isDragging)
-            Debug.Log("Dragging: " + dragPreview.transform.position);
     }
 
     // Probeert object te plaatsen
@@ -222,6 +217,7 @@ public class ObjectHandler : MonoBehaviour
         // PLAATSEN!!
         Instantiate(prefabToPlace, position, Quaternion.identity);
 
+        // Bepaal type voor API (Dog_Dachshund, Toy_Ball, etc.)
         string objectType = DetermineObjectType(prefabToPlace);
 
         //De informatie naar de server sturen
@@ -242,13 +238,14 @@ public class ObjectHandler : MonoBehaviour
 
     private string DetermineObjectType(GameObject prefab)
     {
-        if (prefab == dachshundPrefab) return "DachshundPrefab";
-        if (prefab == frenchBulldogPrefab) return "FrenchiePrefab";
-        if (prefab == shibaInuPrefab) return "ShibaPrefab";
-        if (prefab == poodlePrefab) return "PoodlePrefab";
-        if (prefab == ballPrefab) return "BallPrefab";
-        if (prefab == bonePrefab) return "BonePrefab";
-        if (prefab == frisbeePrefab) return "FrisbeePrefab";
+        // Vereenvoudigde typebepaling - pas aan op basis van je prefab namen
+        if (prefab == dachshundPrefab) return "Dog_Dachshund";
+        if (prefab == frenchBulldogPrefab) return "Dog_FrenchBulldog";
+        if (prefab == shibaInuPrefab) return "Dog_ShibaInu";
+        if (prefab == poodlePrefab) return "Dog_Poodle";
+        if (prefab == ballPrefab) return "Toy_Ball";
+        if (prefab == bonePrefab) return "Toy_Bone";
+        if (prefab == frisbeePrefab) return "Toy_Frisbee";
 
         return "Unknown";
     }
