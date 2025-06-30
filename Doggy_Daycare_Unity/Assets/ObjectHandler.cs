@@ -62,7 +62,7 @@ public class ObjectHandler : MonoBehaviour
             //de grenzen van de wereld aangeven
             DrawBorder(data.world.width, data.world.height);
 
-            // Instantieer honden en speeltjes (MOET AANGEPAST WORDEN VOOR MEERDERE TYPES)
+            // Instantieer honden en speeltjes
             foreach (var obj in data.objects)
             {
                 // Voor nu gebruiken we standaard prefabs - later aanpassen
@@ -75,16 +75,19 @@ public class ObjectHandler : MonoBehaviour
     }
 
     //Dit tekent de randen van de wereld, snapte ik ook niet zo goed dus gestolen van iemand anders :))
-    private void DrawBorder(int width, int height)
+    private void DrawBorder(float width, float height)
     {
+        float halfW = width * 0.5f;
+        float halfH = height * 0.5f;
+
         borderLine.positionCount = 5;
         borderLine.SetPositions(new Vector3[]
         {
-            new Vector3(0, 0, 0),
-            new Vector3(width, 0, 0),
-            new Vector3(width, height, 0),
-            new Vector3(0, height, 0),
-            new Vector3(0, 0, 0)
+        new Vector3(-halfW, -halfH, 0),   // bottom-left
+        new Vector3( halfW, -halfH, 0),   // bottom-right
+        new Vector3( halfW,  halfH, 0),   // top-right
+        new Vector3(-halfW,  halfH, 0),   // top-left
+        new Vector3(-halfW, -halfH, 0)    // back to start
         });
     }
 
@@ -202,10 +205,11 @@ public class ObjectHandler : MonoBehaviour
             return;
         }
 
-        //checken of de positie wel binnen de grenzen van de wereld valt
-        bool inBounds = position.x >= 0 && position.y >= 0 &&
-                       position.x <= GameState.SelectedWorldWidth &&
-                       position.y <= GameState.SelectedWorldHeight;
+        float halfW = GameState.SelectedWorldWidth * 0.5f;
+        float halfH = GameState.SelectedWorldHeight * 0.5f;
+
+        bool inBounds = position.x >= -halfW && position.x <= halfW &&
+                        position.y >= -halfH && position.y <= halfH;
 
         if (!inBounds)
         {
