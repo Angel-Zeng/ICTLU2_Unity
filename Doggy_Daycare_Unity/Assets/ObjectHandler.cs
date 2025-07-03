@@ -66,8 +66,13 @@ public class ObjectHandler : MonoBehaviour
             // Instantieer honden en speeltjes
             foreach (var obj in data.objects)
             {
-                // Voor nu gebruiken we standaard prefabs - later aanpassen
-                GameObject prefab = obj.type.StartsWith("Dog") ? dachshundPrefab : ballPrefab;
+                GameObject prefab = PrefabFromType(obj.type);
+                if (prefab == null)
+                {
+                    Debug.LogWarning($"Onbekend objecttype '{obj.type}' – overgeslagen");
+                    continue;
+                }
+
                 Instantiate(prefab, new Vector3(obj.x, obj.y, 0), Quaternion.identity);
             }
 
@@ -253,6 +258,20 @@ public class ObjectHandler : MonoBehaviour
 
         return "Unknown";
     }
+
+    private GameObject PrefabFromType(string type) => type switch
+    {
+        "Dog_Dachshund" => dachshundPrefab,
+        "Dog_FrenchBulldog" => frenchBulldogPrefab,
+        "Dog_ShibaInu" => shibaInuPrefab,
+        "Dog_Poodle" => poodlePrefab,
+
+        "Toy_Ball" => ballPrefab,
+        "Toy_Bone" => bonePrefab,
+        "Toy_Frisbee" => frisbeePrefab,
+
+        _ => null
+    };
 
     private bool IsOverTrashCan()
     {

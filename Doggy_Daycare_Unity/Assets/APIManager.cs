@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -150,8 +151,11 @@ public static class APIManager
                                         float y,
                                         Action<APIResponse> callback)
     {
-        string jsonBody = $"{{\"type\":\"{type}\",\"x\":{x},\"y\":{y}}}";
-
+        string jsonBody = string.Format(
+            CultureInfo.InvariantCulture,
+            "{{\"type\":\"{0}\",\"x\":{1},\"y\":{2}}}",
+            type, x, y);
+     
         using UnityWebRequest request =
             new UnityWebRequest($"{BASE_URL}/Worlds/{worldId}/objects", "POST");
 
