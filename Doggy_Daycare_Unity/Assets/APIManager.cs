@@ -160,8 +160,12 @@ public static class APIManager
         request.SetRequestHeader("Content-Type", "application/json");
         AddAuthHeader(request);
 
+        Debug.Log(jsonBody);
+        
         yield return request.SendWebRequest();
         callback?.Invoke(BuildResponse(request));
+        
+        
     }
 
     //Nog meer DTO's voor wereld met objecten

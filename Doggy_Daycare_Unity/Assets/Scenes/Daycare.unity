@@ -2135,13 +2135,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a45ed2e803b4e142978446cb16b087d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dachshundPrefab: {fileID: 1919201038}
-  frenchBulldogPrefab: {fileID: 1704998833}
-  shibaInuPrefab: {fileID: 248025492}
-  poodlePrefab: {fileID: 1198866904}
-  ballPrefab: {fileID: 121695387}
-  bonePrefab: {fileID: 1092175605}
-  frisbeePrefab: {fileID: 31753489}
+  dachshundPrefab: {fileID: 8951362535962638649, guid: 97ec80814f9f4b2489a66dcfd3657bdc, type: 3}
+  frenchBulldogPrefab: {fileID: 8951362535962638649, guid: 32692935be01d8847b3af0fbfb0ae119, type: 3}
+  shibaInuPrefab: {fileID: 513812920273013, guid: 0cd92d875bcdd6f488259e2d8c05e8dd, type: 3}
+  poodlePrefab: {fileID: 8951362535962638649, guid: c6579ae8fa43a4342be6cdf54c2f283e, type: 3}
+  ballPrefab: {fileID: 513812920273013, guid: c91588ac5d8b32549ac130e3cdce9372, type: 3}
+  bonePrefab: {fileID: 513812920273013, guid: cbdec07d58d554541a55f1ef89ad44b9, type: 3}
+  frisbeePrefab: {fileID: 513812920273013, guid: 6b9ceaa3758e5834da12c7dff5c3a744, type: 3}
   worldNameText: {fileID: 1972860237}
   feedbackText: {fileID: 1720626917}
   borderLine: {fileID: 1693419544}
