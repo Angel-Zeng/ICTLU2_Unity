@@ -38,6 +38,11 @@ public class WorldHandler : MonoBehaviour
         SceneManager.LoadScene("StartMenu");
     }
 
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene("WorldMenu");
+    }
+
     // laden van werelden en in de scrollview weergeven
     private IEnumerator LoadWorlds()
     {

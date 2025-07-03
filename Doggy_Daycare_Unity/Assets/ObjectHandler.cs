@@ -3,8 +3,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
-//Dit script heeft mijn heeft mijn mentale gezondheid naar een dieptepunt gebracht, de honden willen niet. 
+//Dit script heeft mijn heeft mijn mentale gezondheid naar een dieptepunt gebracht, de honden slepen nu wel. 
 public class ObjectHandler : MonoBehaviour
 {
     // Enums voor type selectie
@@ -83,11 +84,11 @@ public class ObjectHandler : MonoBehaviour
         borderLine.positionCount = 5;
         borderLine.SetPositions(new Vector3[]
         {
-        new Vector3(-halfW, -halfH, 0),   // bottom-left
-        new Vector3( halfW, -halfH, 0),   // bottom-right
-        new Vector3( halfW,  halfH, 0),   // top-right
-        new Vector3(-halfW,  halfH, 0),   // top-left
-        new Vector3(-halfW, -halfH, 0)    // back to start
+        new Vector3(-halfW, -halfH, 0),
+        new Vector3( halfW, -halfH, 0),
+        new Vector3( halfW,  halfH, 0),
+        new Vector3(-halfW,  halfH, 0),
+        new Vector3(-halfW, -halfH, 0)
         });
     }
 
@@ -296,5 +297,10 @@ public class ObjectHandler : MonoBehaviour
             color.a = alpha;
             renderer.color = color;
         }
+    }
+
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene("WorldMenu");
     }
 }
