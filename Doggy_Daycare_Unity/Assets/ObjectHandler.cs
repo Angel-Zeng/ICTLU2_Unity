@@ -136,7 +136,7 @@ public class ObjectHandler : MonoBehaviour
         }
     }
 
-    //De sleepfunc
+    //De sleepfunctie
     public void StartDrag(GameObject prefab)
     {
         if (isDragging) return;
@@ -149,14 +149,13 @@ public class ObjectHandler : MonoBehaviour
 
         SetAlpha(dragPreview, 0.5f); // even semi maken 
 
-        // Colliders uitschakelen tijdens het slepen
         var colliders = dragPreview.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
         {
             collider.enabled = false;
         }
 
-        // Voeg tijdelijk een BoxCollider2D toe voor betere hit detection
+        // BoxCollider2D toegevoegd 
         if (dragPreview.GetComponent<Collider2D>() == null)
         {
             dragPreview.AddComponent<BoxCollider2D>();
