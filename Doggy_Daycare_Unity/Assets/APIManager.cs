@@ -151,6 +151,9 @@ public static class APIManager
                                         float y,
                                         Action<APIResponse> callback)
     {
+        // dit gedeelte gaf vele problemen met het parsen. Want hij parste met een komma omdat mijn taal op nederlands staat
+        //Als iemand dit ooit leest, ik heb dit opgelost door de cultuur van de string te forceren naar invariant culture
+        //Dit heeft uren gekost. 
         string jsonBody = string.Format(
             CultureInfo.InvariantCulture,
             "{{\"type\":\"{0}\",\"x\":{1},\"y\":{2}}}",
